@@ -1,4 +1,5 @@
 // https://devblogs.nvidia.com/how-access-global-memory-efficiently-cuda-c-kernels/
+// https://www.tutorialspoint.com/cuda/cuda_memory_considerations.htm
 
  #include <stdio.h>
  #include <assert.h>
