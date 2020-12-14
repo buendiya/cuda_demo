@@ -1,3 +1,4 @@
+// https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/
 #include <stdio.h>
 #include <assert.h>
 
