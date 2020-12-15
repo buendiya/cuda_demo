@@ -50,3 +50,4 @@
    for (int i = 0; i < n; i++) 
      if (d[i] != r[i]) printf("Error: d[%d]!=r[%d] (%d, %d)\n", i, i, d[i], r[i]);
  }
+

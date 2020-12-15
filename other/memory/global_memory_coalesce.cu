@@ -1,8 +1,10 @@
 // https://devblogs.nvidia.com/how-access-global-memory-efficiently-cuda-c-kernels/
 // https://www.tutorialspoint.com/cuda/cuda_memory_considerations.htm
 
- #include <stdio.h>
- #include <assert.h>
+#include <stdio.h>
+#include <assert.h>
+#include <cuda_runtime_api.h>
+
  
  // Convenience function for checking CUDA runtime API results
  // can be wrapped around any runtime API call. No-op in release builds.
@@ -112,3 +114,5 @@
    if (bFp64) runTest<double>(deviceId, nMB);
    else       runTest<float>(deviceId, nMB);
  }
+
+

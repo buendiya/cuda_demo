@@ -7,8 +7,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <chrono>
 #include <iostream>
+#include <random>     // mt19937 and uniform_int_distribution
+#include <algorithm>  // generate
+#include <vector>     // vector
+#include <iterator>   // begin, end, and ostream_iterator
+#include <functional> // bind
 #include <cuda_runtime_api.h>
 
 // Matrices are stored in row-major order:
@@ -78,21 +84,44 @@ __global__ void MatMulKernel(Matrix A, Matrix B, Matrix C)
     C.elements[row * C.width + col] = Cvalue;
 }
 
+
+std::vector<float> create_random_data(int n) {
+  std::random_device r;
+  std::seed_seq      seed{r(), r(), r(), r(), r(), r(), r(), r()};
+  std::mt19937       eng(seed); // a source of random data
+
+  std::uniform_real_distribution<float> dist;
+  std::vector<float> v(n);
+
+  generate(begin(v), end(v), bind(dist, eng));
+  return v;
+}
+
+
 int main(int argc, char **argv) {
 
-	int dim = 100000;
+	int dim = 1024*4;
 	Matrix a = {dim, dim, nullptr};
 	Matrix b = {dim, dim, nullptr};
 	Matrix c = {dim, dim, nullptr};
+	a.elements = (float*)malloc(dim * dim * sizeof(float));
+	b.elements = (float*)malloc(dim * dim * sizeof(float));
 	c.elements = (float*)malloc(dim * dim * sizeof(float));
 
+	std::vector<float> input = create_random_data(dim*dim);
+	std::cout << input[0] << std::endl;
     auto t1 = std::chrono::high_resolution_clock::now();
+
+	memcpy(a.elements, input.data(), dim * dim * sizeof(float));
+	memcpy(b.elements, input.data(), dim * dim * sizeof(float));
 	MatMul(a, b, c);
 
     auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "encode takes: " << duration/1000.0  << " milliseconds" << std::endl;
+    std::cout << "takes: " << duration/1000.0  << " milliseconds" << std::endl;
 
+	free(a.elements);
+	free(b.elements);
 	free(c.elements);
 	printf("finish\n");
 }
